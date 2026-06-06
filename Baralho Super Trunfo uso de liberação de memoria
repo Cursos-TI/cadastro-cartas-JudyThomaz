@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h> // OBRIGATÓRIO para usar malloc e free
+#include <string.h>
+
+struct SuperTrunfo {
+    char estado;
+    char codigo[4];          
+    char nomeCidade[50];     
+    unsigned long populacao; 
+    float area;              
+    double pib;              
+    int pontosTuristicos;    
+    float densidadePopulacional;
+    float pibPerCapita;
+    float superPoder;
+};
+
+// Funções void reaproveitadas do seu código anterior
+void exibirAbertura(void) {
+    printf("=========================================\n");
+    printf("   CADASTRO DE BARALHO - SUPER TRUNFO!   \n");
+    printf("=========================================\n\n");
+}
+
+void exibirDadosCarta(struct SuperTrunfo carta) {
+    printf("--- CARTA (%s) ---\n", carta.codigo);
+    printf("Cidade: %s | População: %lu hab\n", carta.nomeCidade, carta.populacao);
+    printf("Densidade: %.2f hab/km² | PIB per Capita: R$ %.2f\n", carta.densidadePopulacional, carta.pibPerCapita);
+    printf("SUPER PODER: %.2f\n", carta.superPoder);
+    printf("-----------------------------------------\n\n");
+}
+
+int main() {
+    int quantidade;
+    
+    // 1. O ARTIFÍCIO: Criamos um ponteiro que representará nosso vetor dinâmico
+    struct SuperTrunfo *baralho;
+
+    exibirAbertura();
+
+    // 2. PERGUNTA AO USUÁRIO: Define o tamanho da memória em tempo de execução
+    printf("Quantas cartas você deseja cadastrar no baralho? ");
+    scanf("%d", &quantidade);
+    printf("\n");
+
+    // 3. ALOCAÇÃO DINÂMICA: Reserva o espaço exato para a quantidade de structs pedida
+    baralho = (struct SuperTrunfo *) malloc(quantidade * sizeof(struct SuperTrunfo));
+
+    // VERIFICAÇÃO DE SEGURANÇA: Garante que o computador tinha memória disponível
+    if (baralho == NULL) {
+        printf("Erro crítico: Memória insuficiente para criar o baralho!\n");
+        return 1; 
+    }
+
+    // 4. LEITURA DINÂMICA: Usamos um laço 'for' para preencher o vetor alocado
+    for (int i = 0; i < quantidade; i++) {
+        printf("--- CADASTRANDO A CARTA %d de %d ---\n", i + 1, quantidade);
+        
+        printf("Digite o Estado (Ex: A): ");   
+        scanf(" %c", &baralho[i].estado); // Note o uso do índice [i]
+        
+        printf("Digite o Código (Ex: A01): "); 
+        scanf("%3s", baralho[i].codigo);
+        
+        printf("Digite a Cidade: ");           
+        scanf(" %49[^\n]", baralho[i].nomeCidade);
+        
+        printf("Digite a População: ");        
+        scanf("%lu", &baralho[i].populacao);
+        
+        printf("Digite a Área (km²): ");       
+        scanf("%f", &baralho[i].area);
+        
+        printf("Digite o PIB (bilhões): ");    
+        scanf("%lf", &baralho[i].pib);
+        
+        printf("Digite os Pts Turísticos: ");  
+        scanf("%d", &baralho[i].pontosTuristicos);
+        
+        // Cálculos automáticos aplicados diretamente na posição 'i' da memória
+        baralho[i].densidadePopulacional = (float)baralho[i].populacao / baralho[i].area;
+        baralho[i].pibPerCapita = (float)((baralho[i].pib * 1000000000.0) / baralho[i].populacao);
+        float invDensidade = (baralho[i].densidadePopulacional > 0) ? (1.0f / baralho[i].densidadePopulacional) : 0.0f;
+        
+        baralho[i].superPoder = (float)baralho[i].populacao + baralho[i].area + (float)baralho[i].pib + 
+                                (float)baralho[i].pontosTuristicos + baralho[i].pibPerCapita + invDensidade;
+        printf("\n");
+    }
+
+    // 5. EXIBIÇÃO: Varre a memória alocada e mostra todas as cartas cadastradas
+    printf("=== BARALHO CADASTRADO ===\n\n");
+    for (int i = 0; i < quantidade; i++) {
+        exibirDadosCarta(baralho[i]); // Passa a struct da posição 'i' para a função void
+    }
+
+    // 6. DEVOLUÇÃO DA MEMÓRIA: Libera os bytes usados antes do programa fechar
+    free(baralho);
+    baralho = NULL; 
+
+    printf("Memória do baralho liberada. Fim do programa!\n");
+    return 0;
+}

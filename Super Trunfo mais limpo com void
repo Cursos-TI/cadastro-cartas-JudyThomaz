@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <string.h>
+
+// Definição da Estrutura das Cartas
+struct SuperTrunfo {
+    char estado;
+    char codigo[4];          
+    char nomeCidade[50];     
+    unsigned long populacao; 
+    float area;              
+    double pib;              
+    int pontosTuristicos;    
+    
+    // Indicadores calculados
+    float densidadePopulacional;
+    float pibPerCapita;
+    float superPoder;
+};
+
+// ========================================================
+// 1. FUNÇÃO VOID: Exibe a abertura do jogo
+// ========================================================
+void exibirAbertura(void) {
+    printf("=========================================\n");
+    printf("       BEM-VINDO AO SUPER TRUNFO!        \n");
+    printf("=========================================\n\n");
+}
+
+// ========================================================
+// 2. FUNÇÃO VOID: Exibe os dados de uma carta qualquer
+// ========================================================
+void exibirDadosCarta(struct SuperTrunfo carta) {
+    printf("--- DADOS DA CARTA (%s) ---\n", carta.codigo);
+    printf("Estado: %c | Cidade: %s\n", carta.estado, carta.nomeCidade);
+    printf("População: %lu hab | Área: %.2f km²\n", carta.populacao, carta.area);
+    printf("PIB: %.2f bilhões | Pontos Turísticos: %d\n", carta.pib, carta.pontosTuristicos);
+    printf("Densidade Pop: %.2f hab/km²\n", carta.densidadePopulacional);
+    printf("PIB per Capita: R$ %.2f\n", carta.pibPerCapita);
+    printf("SUPER PODER: %.2f\n", carta.superPoder);
+    printf("-----------------------------------------\n\n");
+}
+
+// ========================================================
+// 3. FUNÇÃO VOID: Compara os atributos de duas cartas
+// ========================================================
+void compararCartas(struct SuperTrunfo c1, struct SuperTrunfo c2) {
+    printf("--- RESULTADO DAS COMPARAÇÕES ---\n");
+    printf("(1 para Vitória da Carta 1 | 0 para Vitória da Carta 2)\n\n");
+
+    // Maior valor vence
+    printf("População: %d\n", c1.populacao > c2.populacao);
+    printf("Área: %d\n", c1.area > c2.area);
+    printf("PIB: %d\n", c1.pib > c2.pib);
+    printf("Pontos Turísticos: %d\n", c1.pontosTuristicos > c2.pontosTuristicos);
+    printf("PIB per Capita: %d\n", c1.pibPerCapita > c2.pibPerCapita);
+    
+    // Menor valor vence (Densidade Populacional)
+    printf("Densidade Populacional: %d\n", c1.densidadePopulacional < c2.densidadePopulacional);
+    
+    // Maior valor vence
+    printf("Super Poder: %d\n", c1.superPoder > c2.superPoder);
+    printf("-----------------------------------------\n");
+}
+
+int main() {
+    struct SuperTrunfo Carta1;
+    struct SuperTrunfo Carta2;
+
+    exibirAbertura();
+
+    // ==========================================
+    // LEITURA DOS DADOS DA CARTA 1
+    // ==========================================
+    printf("--- CADASTRO DA CARTA 1 ---\n");
+    printf("Digite o Estado (Ex: A): ");   scanf(" %c", &Carta1.estado);
+    printf("Digite o Código (Ex: A01): "); scanf("%3s", Carta1.codigo);
+    printf("Digite a Cidade: ");           scanf(" %49[^\n]", Carta1.nomeCidade);
+    printf("Digite a População: ");        scanf("%lu", &Carta1.populacao);
+    printf("Digite a Área (km²): ");       scanf("%f", &Carta1.area);
+    printf("Digite o PIB (bilhões): ");    scanf("%lf", &Carta1.pib);
+    printf("Digite os Pts Turísticos: ");  scanf("%d", &Carta1.pontosTuristicos);
+    printf("\n");
+
+    // ==========================================
+    // LEITURA DOS DADOS DA CARTA 2
+    // ==========================================
+    printf("--- CADASTRO DA CARTA 2 ---\n");
+    printf("Digite o Estado (Ex: B): ");   scanf(" %c", &Carta2.estado);
+    printf("Digite o Código (Ex: B02): "); scanf("%3s", Carta2.codigo);
+    printf("Digite a Cidade: ");           scanf(" %49[^\n]", Carta2.nomeCidade);
+    printf("Digite a População: ");        scanf("%lu", &Carta2.populacao);
+    printf("Digite a Área (km²): ");       scanf("%f", &Carta2.area);
+    printf("Digite o PIB (bilhões): ");    scanf("%lf", &Carta2.pib);
+    printf("Digite os Pts Turísticos: ");  scanf("%d", &Carta2.pontosTuristicos);
+    printf("\n");
+
+    // ==========================================
+    // PROCESSAMENTO E CÁLCULOS (AUTOMÁTICOS)
+    // ==========================================
+    // Carta 1
+    Carta1.densidadePopulacional = (float)Carta1.populacao / Carta1.area;
+    Carta1.pibPerCapita = (float)((Carta1.pib * 1000000000.0) / Carta1.populacao);
+    float invDensidade1 = (Carta1.densidadePopulacional > 0) ? (1.0f / Carta1.densidadePopulacional) : 0.0f;
+    Carta1.superPoder = (float)Carta1.populacao + Carta1.area + (float)Carta1.pib + 
+                        (float)Carta1.pontosTuristicos + Carta1.pibPerCapita + invDensidade1;
+
+    // Carta 2
+    Carta2.densidadePopulacional = (float)Carta2.populacao / Carta2.area;
+    Carta2.pibPerCapita = (float)((Carta2.pib * 1000000000.0) / Carta2.populacao);
+    float invDensidade2 = (Carta2.densidadePopulacional > 0) ? (1.0f / Carta2.densidadePopulacional) : 0.0f;
+    Carta2.superPoder = (float)Carta2.populacao + Carta2.area + (float)Carta2.pib + 
+                        (float)Carta2.pontosTuristicos + Carta2.pibPerCapita + invDensidade2;
+
+    // ==========================================
+    // EXIBIÇÃO E COMPARAÇÃO USANDO AS FUNÇÕES
+    // ==========================================
+    exibirDadosCarta(Carta1);
+    exibirDadosCarta(Carta2);
+    
+    compararCartas(Carta1, Carta2);
+
+    return 0;
+}
